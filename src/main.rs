@@ -1,9 +1,11 @@
 #[macro_use]
 extern crate rocket;
 
+mod client;
 mod mdns_record;
 mod store;
 
+use client::StaticClientFiles;
 use rocket::{
     http::Status,
     response::{Redirect, Responder},
@@ -67,6 +69,7 @@ async fn main() -> Result<()> {
     let _rocket = rocket::build()
         .manage(NameStore::new(Path::new("store"))?)
         .mount("/", routes![index, resolve_token, assign_token])
+        .mount("/", StaticClientFiles::new())
         .launch()
         .await?;
 
