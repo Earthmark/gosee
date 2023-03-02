@@ -47,21 +47,21 @@ impl Handler for StaticClientFiles {
     async fn handle<'r>(&self, req: &'r Request<'_>, data: Data<'r>) -> Outcome<'r> {
         if let Ok(path) = req.segments::<PathBuf>(0..) {
             let payload = if path == PathBuf::new() && accepts_html(req) {
-                Some((ContentType::HTML, RawClientFiles::get("index.html")))
+                (ContentType::HTML, RawClientFiles::get("index.html"))
             } else {
                 let content_type = path
                     .extension()
                     .and_then(OsStr::to_str)
                     .and_then(ContentType::from_extension)
                     .unwrap_or(ContentType::Bytes);
-                Some((content_type, path.to_str().and_then(RawClientFiles::get)))
+                (content_type, path.to_str().and_then(RawClientFiles::get))
             };
 
-            if let Some((content_type, Some(content))) = payload {
+            if let (content_type, Some(content)) = payload {
                 return Outcome::from_or_forward(req, data, (content_type, content.data));
             }
         }
 
-        return Outcome::forward(data);
+        Outcome::forward(data)
     }
 }

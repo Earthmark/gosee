@@ -2,7 +2,6 @@
 extern crate rocket;
 
 mod client;
-mod mdns_record;
 mod store;
 
 use client::StaticClientFiles;
@@ -17,8 +16,6 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("mDNS: {0}")]
-    Mdns(#[from] mdns_record::Error),
     #[error("Store: {0}")]
     Store(#[from] store::Error),
     #[error("Rocket: {0}")]
